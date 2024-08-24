@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authorizeRoles, isAuthenticatedUser } from "../../middlewere/auth";
 import { createSlotsIntoDB } from "./slot.controller";
+import { authorizeRoles, isAuthenticatedUser } from "../../middlewares/auth";
 
 const router = Router();
 router.post(

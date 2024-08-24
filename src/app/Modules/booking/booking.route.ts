@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authorizeRoles, isAuthenticatedUser } from "../../middlewere/auth";
+import { authorizeRoles, isAuthenticatedUser } from "../../middlewares/auth";
 import { createBookingIntoDB, getAllBookings } from "./booking.controller";
 
 const router = Router();

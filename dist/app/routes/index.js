@@ -4,17 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const booking_route_1 = __importDefault(require("../Modules/booking/booking.route"));
-const booking_route2_1 = __importDefault(require("../Modules/booking/booking.route2"));
-const service_route_1 = __importDefault(require("../Modules/service/service.route"));
-const slot_route_1 = __importDefault(require("../Modules/slot/slot.route"));
-const slot_route2_1 = __importDefault(require("../Modules/slot/slot.route2"));
-const user_route_1 = __importDefault(require("../Modules/user/user.route"));
+const auth_route_1 = __importDefault(require("../modules/auth/auth.route"));
+const booking_route_1 = __importDefault(require("../modules/booking/booking.route"));
+const booking_route2_1 = __importDefault(require("../modules/booking/booking.route2"));
+const service_route_1 = __importDefault(require("../modules/service/service.route"));
+const slot_route_1 = __importDefault(require("../modules/slot/slot.route"));
+const slot_route2_1 = __importDefault(require("../modules/slot/slot.route2"));
+// import userRoutes from "../modules/user/user.route";
 const router = express_1.default.Router();
 const moduleRoute = [
     {
         path: "/auth",
-        route: user_route_1.default,
+        route: auth_route_1.default,
     },
     {
         path: "/services",

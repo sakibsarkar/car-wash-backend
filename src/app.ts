@@ -1,8 +1,8 @@
 import express from "express";
 import morgan from "morgan";
-import globalErrorHandler from "./app/middlewere/globalError";
-import { notFound } from "./app/middlewere/not-found";
+import { notFound } from "./app/middlewares/not-found";
 import router from "./app/routes";
+import errorMiddleware from "./app/middlewares/error";
 
 const app = express();
 
@@ -13,11 +13,10 @@ app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("Hello from server");
 });
-app.use("/api",router)
+app.use("/api", router);
 // 404 Handler
 app.use(notFound);
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-app.use(globalErrorHandler);
+app.use(errorMiddleware);
 
 export default app;

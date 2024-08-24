@@ -1,10 +1,17 @@
 import jwt from "jsonwebtoken";
-import Config from "../app/config";
 
-const createToken = (user: object, expires: string) => {
-  return jwt.sign(user, Config.jwt_access_secret as string, {
+export interface ITokenPayload {
+  email: string;
+  role: string;
+  id: string;
+}
+export const createAcessToken = (user: ITokenPayload, expires: string) => {
+  return jwt.sign({ user }, process.env.JWT_ACCESS_SECRET as string, {
     expiresIn: expires,
   });
 };
-
-export default createToken;
+export const createRefreshToken = (user: object) => {
+  return jwt.sign({ user }, process.env.JWT_REFRESH_SECRET as string, {
+    expiresIn: "30 days",
+  });
+};

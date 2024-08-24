@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { catchAsyncError } from "../../../utils/catchAsyncError";
+import { createAcessToken, createRefreshToken } from "../../../utils/jwtToken";
+import sendMessage from "../../../utils/sendMessage";
+import sendResponse from "../../../utils/sendResponse";
+import User from "../user/user.model";
+import Authentication from "./auth.model";
 
-import catchAsyncError from "../middlewares/catchAsyncErrors";
-import Authentication from "../models/auth.model";
-
-import User from "../models/user.model";
-import { createAcessToken, createRefreshToken } from "../utils/jwtToken";
-import sendMessage from "../utils/sendMessage";
-import sendResponse from "../utils/sendResponse";
 export const authSateController = catchAsyncError(async (req, res) => {
   const user = req.user as JwtPayload;
 
@@ -161,7 +161,7 @@ export const loginController = catchAsyncError(async (req, res) => {
 });
 
 // reset password
-export const resetPassword = catchAsyncError(async (req: any, res, next) => {
+export const resetPassword = catchAsyncError(async (req, res) => {
   const { password, oldPassword } = req.body;
 
   const user = req.user;
@@ -301,7 +301,7 @@ export const recoverPassword = catchAsyncError(async (req, res) => {
     );
 
     decoded = decode;
-  } catch (error) {
+  } catch {
     sendResponse(res, {
       data: null,
       message: "invalid authentication",

@@ -12,55 +12,70 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logInUser = exports.createUserIntoDB = void 0;
+exports.updateUserInfo = exports.updateUserProfileImage = void 0;
 const catchAsyncError_1 = require("../../../utils/catchAsyncError");
 const sendResponse_1 = __importDefault(require("../../../utils/sendResponse"));
-const user_model_1 = require("./user.model");
-const user_service_1 = __importDefault(require("./user.service"));
-const { createUserService, logInUserService } = user_service_1.default;
-exports.createUserIntoDB = (0, catchAsyncError_1.catchAsyncError)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body } = req;
-    const isExist = yield user_model_1.User.isUserExistsByEmail(body.email);
-    if (isExist) {
+const uploadFile_1 = require("../../../utils/uploadFile");
+const user_model_1 = __importDefault(require("./user.model"));
+exports.updateUserProfileImage = (0, catchAsyncError_1.catchAsyncError)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const file = req.file;
+    const user = req.user;
+    if (!file) {
         return (0, sendResponse_1.default)(res, {
-            success: false,
-            message: "User already exist in this email",
-            data: null,
-            statusCode: 400,
-        });
-    }
-    const result = yield createUserService(body);
-    (0, sendResponse_1.default)(res, {
-        success: true,
-        statusCode: 200,
-        message: "User registered successfully",
-        data: result,
-    });
-}));
-exports.logInUser = (0, catchAsyncError_1.catchAsyncError)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body } = req;
-    const { matched, token, notfound, user } = yield logInUserService(body);
-    if (notfound === true) {
-        return (0, sendResponse_1.default)(res, {
-            message: "user not found for this email",
+            message: "file not found",
             success: false,
             data: null,
             statusCode: 404,
         });
     }
-    if (matched === false) {
+    const uploadRes = yield (0, uploadFile_1.sendImageToCloudinary)(file.filename, file.path);
+    const url = uploadRes.secure_url;
+    if (!url) {
         return (0, sendResponse_1.default)(res, {
-            message: "Password didn't matched",
+            message: "failed to upload image",
             success: false,
             data: null,
-            statusCode: 401,
+            statusCode: 400,
         });
     }
-    res.json({
-        success: true,
+    const isExistUser = yield user_model_1.default.findOne({ email: user.email });
+    if (!isExistUser) {
+        return (0, sendResponse_1.default)(res, {
+            message: "user not found",
+            success: false,
+            data: null,
+            statusCode: 404,
+        });
+    }
+    const result = yield user_model_1.default.findByIdAndUpdate(isExistUser._id, { image: url }, { new: true, runValidators: true });
+    (0, sendResponse_1.default)(res, {
+        data: result,
+        message: "image updated successfully",
         statusCode: 200,
-        token,
-        message: "User logged in successfully",
-        data: user,
+        success: true,
+    });
+}));
+exports.updateUserInfo = (0, catchAsyncError_1.catchAsyncError)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { body } = req;
+    const user = req.user;
+    ["email", "role", "image"].forEach((item) => delete body[item]);
+    const isExistUser = yield user_model_1.default.findOne({ email: user.email });
+    if (!isExistUser) {
+        return (0, sendResponse_1.default)(res, {
+            message: "user not found",
+            success: false,
+            data: null,
+            statusCode: 404,
+        });
+    }
+    const result = yield user_model_1.default.findByIdAndUpdate(isExistUser._id, body, {
+        new: true,
+        runValidators: true,
+    });
+    (0, sendResponse_1.default)(res, {
+        data: result,
+        message: "user profile updated successfully",
+        statusCode: 200,
+        success: true,
     });
 }));

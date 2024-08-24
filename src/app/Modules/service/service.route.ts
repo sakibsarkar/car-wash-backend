@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authorizeRoles, isAuthenticatedUser } from "../../middlewere/auth";
-import { validSchema } from "../../middlewere/validator";
+import { authorizeRoles, isAuthenticatedUser } from "../../middlewares/auth";
+import { validSchema } from "../../middlewares/validator";
 import {
   createServiceIntoDB,
   deleteServiceById,
