@@ -1,58 +1,78 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { JwtPayload } from "jsonwebtoken";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
-import { User } from "./user.model";
-import userService from "./user.service";
+import { sendImageToCloudinary } from "../../../utils/uploadFile";
+import User from "./user.model";
 
-const { createUserService, logInUserService } = userService;
-export const createUserIntoDB = catchAsyncError(async (req, res) => {
-  const { body } = req;
-  const isExist = await User.isUserExistsByEmail(body.email);
-  if (isExist) {
+export const updateUserProfileImage = catchAsyncError(async (req, res) => {
+  const file = req.file;
+  const user = req.user as JwtPayload;
+  if (!file) {
     return sendResponse(res, {
+      message: "file not found",
       success: false,
-      message: "User already exist in this email",
+      data: null,
+      statusCode: 404,
+    });
+  }
+  const uploadRes: any = await sendImageToCloudinary(file.filename, file.path);
+  const url = uploadRes.secure_url as string;
+  if (!url) {
+    return sendResponse(res, {
+      message: "failed to upload image",
+      success: false,
       data: null,
       statusCode: 400,
     });
   }
 
-  const result = await createUserService(body);
+  const isExistUser = await User.findOne({ email: user.email });
+  if (!isExistUser) {
+    return sendResponse(res, {
+      message: "user not found",
+      success: false,
+      data: null,
+      statusCode: 404,
+    });
+  }
+  const result = await User.findByIdAndUpdate(
+    isExistUser._id,
+    { image: url },
+    { new: true, runValidators: true }
+  );
+
   sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    message: "User registered successfully",
     data: result,
+    message: "image updated successfully",
+    statusCode: 200,
+    success: true,
   });
 });
-
-export const logInUser = catchAsyncError(async (req, res) => {
+export const updateUserInfo = catchAsyncError(async (req, res) => {
   const { body } = req;
-  const { matched, token, notfound, user } = await logInUserService(body);
-  if (notfound === true) {
+  const user = req.user as JwtPayload;
+  ["email", "role", "image"].forEach((item) => delete body[item]);
+
+  const isExistUser = await User.findOne({ email: user.email });
+  if (!isExistUser) {
     return sendResponse(res, {
-      message: "user not found for this email",
+      message: "user not found",
       success: false,
       data: null,
       statusCode: 404,
     });
   }
 
+  const result = await User.findByIdAndUpdate(isExistUser._id, body, {
+    new: true,
+    runValidators: true,
+  });
 
-
-  if (matched === false) {
-    return sendResponse(res, {
-      message: "Password didn't matched",
-      success: false,
-      data: null,
-      statusCode: 401,
-    });
-  }
-
-  res.json({
-    success: true,
+  sendResponse(res, {
+    data: result,
+    message: "user profile updated successfully",
     statusCode: 200,
-    token,
-    message: "User logged in successfully",
-    data: user,
+    success: true,
   });
 });

@@ -1,16 +1,17 @@
 import express from "express";
-import bookingRoutes from "../Modules/booking/booking.route";
-import bookingRoutes2 from "../Modules/booking/booking.route2";
-import serviceRoutes from "../Modules/service/service.route";
-import slotRoutes from "../Modules/slot/slot.route";
-import slotRoutes2 from "../Modules/slot/slot.route2";
-import userRoutes from "../Modules/user/user.route";
+import authRoute from "../modules/auth/auth.route";
+import bookingRoutes from "../modules/booking/booking.route";
+import bookingRoutes2 from "../modules/booking/booking.route2";
+import serviceRoutes from "../modules/service/service.route";
+import slotRoutes from "../modules/slot/slot.route";
+import slotRoutes2 from "../modules/slot/slot.route2";
+// import userRoutes from "../modules/user/user.route";
 const router = express.Router();
 
 const moduleRoute = [
   {
     path: "/auth",
-    route: userRoutes,
+    route: authRoute,
   },
   {
     path: "/services",

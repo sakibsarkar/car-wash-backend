@@ -1,57 +1,33 @@
-import bcrypt from "bcrypt";
-import { Schema, model } from "mongoose";
-import Config from "../../config";
-import IUser, { UserModel } from "./user.interface";
-const userSchema = new Schema<IUser>(
+import mongoose from "mongoose";
+
+const userScheam = new mongoose.Schema(
   {
-    name: {
+    auth: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "Authentication",
+    },
+    firstName: {
       type: String,
       required: true,
-      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
     },
-    password: {
+    image: {
       type: String,
-      required: true,
-      select: 0,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
-    role: {
-      type: String,
-      enum: ["admin", "user"],
-      default: "user",
-    },
-    address: {
-      type: String,
-      required: true,
+      required: false,
+      default: "",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-userSchema.pre("save", async function (next) {
-  const user = this; // doc
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(Config.bcrypt_salt_rounds)
-  );
-  next();
-});
+const User = mongoose.model("User", userScheam);
 
-userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select("+password");
-};
-
-
-export const User = model<IUser, UserModel>("User", userSchema);
+export default User;
