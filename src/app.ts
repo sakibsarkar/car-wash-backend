@@ -3,10 +3,15 @@ import morgan from "morgan";
 import { notFound } from "./app/middlewares/not-found";
 import router from "./app/routes";
 import errorMiddleware from "./app/middlewares/error";
-
+import cors from "cors"
 const app = express();
 
 // Middlewares
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
