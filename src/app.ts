@@ -1,9 +1,9 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import router from "../src/app/routes/index";
 import errorMiddleware from "./app/middlewares/error";
 import { notFound } from "./app/middlewares/not-found";
-import router from "./app/routes";
 const app = express();
 
 // Middlewares
@@ -15,10 +15,10 @@ app.use(
 app.use(express.json());
 app.use(morgan("dev"));
 
+app.use("/api", router);
 app.get("/", (req, res) => {
   res.send("Hello from server");
 });
-app.use("/api", router);
 // 404 Handler
 app.use(notFound);
 

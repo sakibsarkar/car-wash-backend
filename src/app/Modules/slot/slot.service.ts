@@ -37,15 +37,21 @@ const createSlot = async (payload: ISlot, duration: number) => {
 };
 
 const getAllAvailableSlotsService = async (query: IAnyObject) => {
-  const find = Slot.find({ isBooked: "available" }).populate("service");
+  const find = Slot.find().populate("service");
   const queryBuilder = new QueryBuilder(find, query).filter();
   const result = await queryBuilder.modelQuery;
+  return result;
+};
+const getSlotByIdService = async (id: string) => {
+  const result = await Slot.findById(id).populate("service");
+
   return result;
 };
 
 const slotService = {
   createSlot,
   getAllAvailableSlotsService,
+  getSlotByIdService
 };
 
 export default slotService;

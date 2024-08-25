@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { IBooking } from "./booking.interface";
-import { vehicleTypes } from "./booking.utils";
 
 const bookingSchema = new Schema<IBooking>(
   {
@@ -19,27 +18,15 @@ const bookingSchema = new Schema<IBooking>(
       required: true,
       ref: "Slot",
     },
-    vehicleType: {
+    payment: {
       type: String,
-      enum: vehicleTypes,
-      required: true,
+      enum: ["paid", "pending"],
+      default: "pending",
     },
-    vehicleBrand: {
+    status: {
       type: String,
-      required: true,
-    },
-    vehicleModel: {
-      type: String,
-      required: true,
-    },
-    manufacturingYear: {
-      type: Number,
-      required: true,
-    },
-    registrationPlate: {
-      type: String,
-      unique: true,
-      required: true,
+      enum: ["cancel", "confirm"],
+      default: "confirm",
     },
   },
   {

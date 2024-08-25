@@ -2,6 +2,7 @@
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../errors/AppError";
+import Authentication from "../modules/auth/auth.model";
 import User from "../modules/user/user.model";
 
 export const isAuthenticatedUser = async (
@@ -33,10 +34,13 @@ export const isAuthenticatedUser = async (
       auth: decoded?.user?.id,
     });
     if (!user) return res.status(404).json({ message: "User does not exist." });
+    const auth = await Authentication.findOne({ email: user.email });
+    if (!auth) return res.status(404).json({ message: "User does not exist." });
 
     // console.log("user =======", user);
 
-    req.user = user;
+    const payload = user.toObject();
+    req.user = { ...payload, role: auth.role };
 
     next();
   } catch (err: any) {

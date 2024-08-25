@@ -3,7 +3,8 @@ import sendResponse from "../../../utils/sendResponse";
 import Service from "../service/service.model";
 import slotService from "./slot.service";
 
-const { createSlot, getAllAvailableSlotsService } = slotService;
+const { createSlot, getAllAvailableSlotsService, getSlotByIdService } =
+  slotService;
 
 export const createSlotsIntoDB = catchAsyncError(async (req, res) => {
   const { body } = req;
@@ -43,6 +44,14 @@ export const getAllAvailableSlots = catchAsyncError(async (req, res) => {
     message: "No data found",
     data: [],
     success: false,
-    statusCode: 404,
+  });
+});
+export const getSlotById = catchAsyncError(async (req, res) => {
+  const result = await getSlotByIdService(req.params.id);
+
+  sendResponse(res, {
+    message: "successfylly get slot",
+    data: result,
+    success: false,
   });
 });

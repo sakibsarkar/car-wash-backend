@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
+import { initiatePayment, IPaymentPayload } from "../payment/payment.utils";
 import Service from "../service/service.model";
 import Slot from "../slot/slot.model";
 import { IBooking } from "./booking.interface";
@@ -9,21 +10,11 @@ import { bookingService } from "./booking.service";
 const { createBookingService, getAllBookingService, getUserBookingsService } =
   bookingService;
 
-export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
-  const x = {
-    serviceId: "60d9c4e4f3b4b544b8b8d1c5",
-    slotId: "60d9c4e4f3b4b544b8b8d1c6",
-    vehicleType: "car",
-    vehicleBrand: "Toyota",
-    vehicleModel: "Camry",
-    manufacturingYear: 2020,
-    registrationPlate: "ABC123",
-  };
-
+export const createBookingIntoDB = catchAsyncError(async (req, res) => {
   const { body } = req;
 
   const user = req.user;
-  const isValidObjId = isValidObjectId(body.serviceId);
+  const isValidObjId = isValidObjectId(body.service);
   if (!isValidObjId) {
     return sendResponse(res, {
       data: null,
@@ -33,8 +24,8 @@ export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  const isExist = await Service.findById(body.serviceId);
-  if (!isExist) {
+  const isExistService = await Service.findById(body.service);
+  if (!isExistService) {
     return sendResponse(res, {
       message: "Service not found",
       data: null,
@@ -42,7 +33,7 @@ export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
       success: false,
     });
   }
-  const slot = await Slot.findById(body.slotId);
+  const slot = await Slot.findById(body.slot);
   if (!slot) {
     return sendResponse(res, {
       message: "slot not found",
@@ -63,21 +54,34 @@ export const createBookingIntoDB = catchAsyncError(async (req, res, next) => {
 
   const data: IBooking = {
     customer: user._id,
-    service: body.serviceId,
-    slot: body.slotId,
+    service: body.service,
+    slot: body.slot,
     ...body,
   };
 
-  const result = await createBookingService(data);
+  await createBookingService(data);
+
+  const paymentPayload: IPaymentPayload = {
+    amount: isExistService.price,
+    cus_add: user.address,
+    cus_email: user.email,
+    cus_name: user.firstName + user.lastName,
+    cus_phone: user.phone,
+    tran_id: `TXN-${Date.now()}`,
+  };
+  const paymentResponse = await initiatePayment(
+    paymentPayload,
+    slot._id.toString()
+  );
   sendResponse(res, {
     success: true,
     statusCode: 200,
     message: "Booking successful",
-    data: result,
+    data: paymentResponse,
   });
 });
 
-export const getAllBookings = catchAsyncError(async (req, res, next) => {
+export const getAllBookings = catchAsyncError(async (req, res) => {
   const result = await getAllBookingService();
 
   if (result.length > 0) {
@@ -96,7 +100,7 @@ export const getAllBookings = catchAsyncError(async (req, res, next) => {
   });
 });
 
-export const getUserBookings = catchAsyncError(async (req, res, next) => {
+export const getUserBookings = catchAsyncError(async (req, res) => {
   const user = req.user;
   const result = await getUserBookingsService(user._id);
   if (result.length > 0) {
