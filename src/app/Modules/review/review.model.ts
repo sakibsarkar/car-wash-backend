@@ -6,6 +6,7 @@ const reviewShcema = new mongoose.Schema<IReview>(
     user: {
       type: mongoose.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     comment: {
       type: String,

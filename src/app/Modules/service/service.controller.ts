@@ -12,7 +12,7 @@ const {
   deleteSingleService,
 } = servicesService;
 
-export const createServiceIntoDB = catchAsyncError(async (req, res, next) => {
+export const createServiceIntoDB = catchAsyncError(async (req, res) => {
   const { body } = req;
   const result = await createService(body);
   sendResponse(res, {
@@ -53,21 +53,23 @@ export const getServiceById = catchAsyncError(async (req, res) => {
   });
 });
 
-export const getAllServiceFromDB = catchAsyncError(async (req, res, next) => {
-  const result = await getAllServices();
-  if (result.length > 0) {
-    return sendResponse(res, {
+export const getAllServiceFromDB = catchAsyncError(async (req, res) => {
+  const result = await getAllServices(req.query);
+  if (result.result.length > 0) {
+    return res.json({
       success: true,
       statusCode: 200,
       message: "Services retrieved successfully",
-      data: result,
+      data: result.result,
+      totalDoc: result.totalDoc,
     });
   }
-  sendResponse(res, {
+  res.json({
     success: false,
     statusCode: 404,
     message: "No Data Found",
     data: [],
+    totalDoc: 0,
   });
 });
 

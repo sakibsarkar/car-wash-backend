@@ -1,23 +1,16 @@
 import { JwtPayload } from "jsonwebtoken";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
-import User from "../user/user.model";
 import reviewService from "./review.service";
 
 export const createReview = catchAsyncError(async (req, res) => {
   const { body } = req;
-  const user = req.user as JwtPayload;
-  const isUserExist = await User.findById(user._id);
-  if (!isUserExist) {
-    return sendResponse(res, {
-      data: null,
-      success: false,
-      message: "user doesn't exist",
-      statusCode: 404,
-    });
-  }
+  const auth = req.user as JwtPayload;
 
-  const result = await reviewService.createReviewService(body);
+  const result = await reviewService.createReviewService({
+    ...body,
+    user: auth._id,
+  });
   sendResponse(res, {
     data: result,
     success: true,

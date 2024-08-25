@@ -3,6 +3,7 @@ import Review from "./review.model";
 
 export const getReviewService = async (limit?: number) => {
   const result = await Review.find()
+    .populate("user")
     .sort({ createdAt: -1 })
     .limit(limit || 2);
 

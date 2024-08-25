@@ -10,14 +10,14 @@ import User from "../user/user.model";
 import Authentication from "./auth.model";
 
 export const authSateController = catchAsyncError(async (req, res) => {
-  const user = req.user as JwtPayload;
+  const auth = req.user as JwtPayload;
 
-  const data = await User.findOne({ email: user.email });
+  const data = await User.findOne({ email: auth.email });
   const result = data ? data.toObject() : {};
   res.json({
     success: true,
     message: "User state get",
-    data: { ...result, role: user.role },
+    data: { ...result, role: auth.role },
   });
 });
 export const createUserController = catchAsyncError(async (req, res) => {

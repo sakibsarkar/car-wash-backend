@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import QueryBuilder from "../../builder/QueryBuilder";
 import IService from "./service.interface";
 import Service from "./service.model";
 
@@ -11,9 +13,32 @@ export const getSingleService = async (id: string) => {
   return result;
 };
 
-const getAllServices = async () => {
-  const result = await Service.find({ isDeleted: false });
-  return result;
+const getAllServices = async (query: Record<string, unknown>) => {
+  const { min, max } = query;
+
+  const minPrice = min ? parseInt(min as string) : 0;
+  const maxPrice = max ? parseInt(max as string) : 0;
+  const filter: Record<string, any> = {};
+
+  if (minPrice && maxPrice) {
+    filter.price = { $gte: minPrice, $lte: maxPrice };
+  } else if (minPrice) {
+    filter.price = { $gte: minPrice };
+  } else if (maxPrice) {
+    filter.price = { $lte: maxPrice };
+  }
+
+  const queryModel = Service.find(filter);
+  const queryBuild = new QueryBuilder(queryModel, query)
+    .paginate()
+    .sort()
+    .search(["name"]);
+
+  const total = await queryBuild.count();
+
+  const result = await queryBuild.modelQuery;
+
+  return { result, totalDoc: total.totalCount };
 };
 
 const updateSingleService = async (id: string, payload: Partial<IService>) => {
