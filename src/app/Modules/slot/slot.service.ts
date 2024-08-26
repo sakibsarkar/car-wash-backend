@@ -42,6 +42,13 @@ const getAllAvailableSlotsService = async (query: IAnyObject) => {
   const result = await queryBuilder.modelQuery;
   return result;
 };
+const getAllSlotsService = async (query: IAnyObject) => {
+  const find = Slot.find().sort("createdAt").populate("service");
+  const queryBuilder = new QueryBuilder(find, query).filter().paginate();
+  const totalDoc = await queryBuilder.count();
+  const result = await queryBuilder.modelQuery;
+  return { result, totalDoc: totalDoc.totalCount };
+};
 const getSlotByIdService = async (id: string) => {
   const result = await Slot.findById(id).populate("service");
 
@@ -51,7 +58,8 @@ const getSlotByIdService = async (id: string) => {
 const slotService = {
   createSlot,
   getAllAvailableSlotsService,
-  getSlotByIdService
+  getSlotByIdService,
+  getAllSlotsService,
 };
 
 export default slotService;
