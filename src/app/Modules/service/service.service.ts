@@ -18,7 +18,7 @@ const getAllServices = async (query: Record<string, unknown>) => {
 
   const minPrice = min ? parseInt(min as string) : 0;
   const maxPrice = max ? parseInt(max as string) : 0;
-  const filter: Record<string, any> = {};
+  const filter: Record<string, any> = { isDeleted: false };
 
   if (minPrice && maxPrice) {
     filter.price = { $gte: minPrice, $lte: maxPrice };
