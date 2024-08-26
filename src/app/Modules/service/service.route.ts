@@ -5,6 +5,7 @@ import {
   createServiceIntoDB,
   deleteServiceById,
   getAllServiceFromDB,
+  getAllServiceNames,
   getServiceById,
   updateServiceById,
 } from "./service.controller";
@@ -19,6 +20,12 @@ router.post(
 );
 
 router.get("/", getAllServiceFromDB);
+router.get(
+  "/g/names",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  getAllServiceNames
+);
 router.get("/:id", getServiceById);
 router.put(
   "/:id",

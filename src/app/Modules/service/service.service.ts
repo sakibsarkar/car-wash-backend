@@ -8,7 +8,12 @@ const createService = async (payload: IService) => {
   return result;
 };
 
-export const getSingleService = async (id: string) => {
+const getAllServiceName = async () => {
+  const result = await Service.find({ isDeleted: false }).select("name");
+  return result;
+};
+
+const getSingleService = async (id: string) => {
   const result = await Service.findById(id);
   return result;
 };
@@ -59,6 +64,7 @@ const servicesService = {
   getAllServices,
   updateSingleService,
   deleteSingleService,
+  getAllServiceName,
 };
 
 export default servicesService;

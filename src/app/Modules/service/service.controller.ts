@@ -10,6 +10,7 @@ const {
   getAllServices,
   updateSingleService,
   deleteSingleService,
+  getAllServiceName,
 } = servicesService;
 
 export const createServiceIntoDB = catchAsyncError(async (req, res) => {
@@ -20,6 +21,16 @@ export const createServiceIntoDB = catchAsyncError(async (req, res) => {
     statusCode: 200,
     message: "Service created successfully",
     data: result,
+  });
+});
+
+export const getAllServiceNames = catchAsyncError(async (req, res) => {
+  const result = await getAllServiceName();
+  sendResponse(res, {
+    message: "Successfully get all service names",
+    data: result,
+    statusCode: 200,
+    success: true,
   });
 });
 
