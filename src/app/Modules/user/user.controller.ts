@@ -3,6 +3,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
 import { sendImageToCloudinary } from "../../../utils/uploadFile";
+import QueryBuilder from "../../builder/QueryBuilder";
 import User from "./user.model";
 
 export const updateUserProfileImage = catchAsyncError(async (req, res) => {
@@ -74,5 +75,28 @@ export const updateUserInfo = catchAsyncError(async (req, res) => {
     message: "user profile updated successfully",
     statusCode: 200,
     success: true,
+  });
+});
+
+export const getAllUser = catchAsyncError(async (req, res) => {
+  const user = req.user as JwtPayload;
+
+  const query = User.find({ _id: { $ne: user._id } }).populate({
+    path: "auth",
+    select: "role",
+  });
+
+  const build = new QueryBuilder(query, req.query).search([
+    "firstName",
+    "lastName",
+    "email",
+  ]);
+  const totalDoc = await build.count();
+  const result = await build.modelQuery;
+  res.json({
+    data: result,
+    success: true,
+    totalDoc: totalDoc.totalCount,
+    message: "successfully get all user",
   });
 });

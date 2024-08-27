@@ -78,7 +78,7 @@ export const genereteAccessToken = catchAsyncError(async (req, res) => {
   }
 
   const refreshTokenSecret = process.env.JWT_REFRESH_SECRET as string;
-console.log({refreshToken,refreshTokenSecret});
+  console.log({ refreshToken, refreshTokenSecret });
 
   try {
     const decoded = jwt.verify(refreshToken, refreshTokenSecret);
@@ -159,6 +159,29 @@ export const loginController = catchAsyncError(async (req, res) => {
     success: true,
     accessToken: token,
     refreshToken,
+  });
+});
+
+export const changeRole = catchAsyncError(async (req, res) => {
+  const id = req.params.id;
+  const { role } = req.body;
+  const isExistUser = await User.findById(id);
+  if (!isExistUser) {
+    return sendResponse(res, {
+      success: false,
+      data: null,
+      message: "No account found",
+      statusCode: 404,
+    });
+  }
+  const result = await Authentication.findOneAndUpdate(
+    { email: isExistUser.email },
+    { role }
+  );
+  sendResponse(res, {
+    data: result,
+    success: true,
+    message: "Successfully update role",
   });
 });
 

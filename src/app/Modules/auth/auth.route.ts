@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { isAuthenticatedUser } from "../../middlewares/auth";
+import { authorizeRoles, isAuthenticatedUser } from "../../middlewares/auth";
 import {
   authSateController,
+  changeRole,
   createUserController,
   forgotPassword,
   genereteAccessToken,
@@ -18,5 +19,11 @@ router.post("/refreshToken", genereteAccessToken);
 router.put("/reset-password", isAuthenticatedUser, resetPassword);
 router.post("/forgot-password", forgotPassword);
 router.put("/recover-password", recoverPassword);
+router.put(
+  "/update-role/:id",
+  isAuthenticatedUser,
+  authorizeRoles("admin"),
+  changeRole
+);
 const authRoute = router;
 export default authRoute;
