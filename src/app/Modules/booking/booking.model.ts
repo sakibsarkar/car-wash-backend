@@ -25,7 +25,7 @@ const bookingSchema = new Schema<IBooking>(
     },
     status: {
       type: String,
-      enum: ["cancel", "confirm"],
+      enum: ["cancel", "confirm", "complete"],
       default: "confirm",
     },
   },

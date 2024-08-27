@@ -104,7 +104,7 @@ export const getAllBookings = catchAsyncError(async (req, res) => {
 
 export const getUserBookings = catchAsyncError(async (req, res) => {
   const user = req.user;
-  const result = await getUserBookingsService(user._id);
+  const result = await getUserBookingsService(user._id, req.query);
   if (result.length > 0) {
     return sendResponse(res, {
       success: true,

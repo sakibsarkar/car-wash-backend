@@ -32,11 +32,15 @@ const getAllBookingService = async (query: IAnyObject) => {
   return { result, totalDoc: totalDoc.totalCount };
 };
 
-const getUserBookingsService = async (userId: string) => {
-  const result = await Booking.find({ customer: userId })
+const getUserBookingsService = async (userId: string, query: IAnyObject) => {
+  const model = Booking.find({ customer: userId })
     .populate("service")
     .populate("slot")
     .populate("customer");
+
+  const queryBuild = new QueryBuilder(model, query).filter();
+  const result = await queryBuild.modelQuery;
+
   return result;
 };
 
