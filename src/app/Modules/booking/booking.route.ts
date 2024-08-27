@@ -9,7 +9,7 @@ router.post(
   authorizeRoles("user"),
   createBookingIntoDB
 );
-router.get("/", isAuthenticatedUser, authorizeRoles("user"), getAllBookings);
+router.get("/", isAuthenticatedUser, authorizeRoles("admin"), getAllBookings);
 
 const bookingRoutes = router;
 export default bookingRoutes;

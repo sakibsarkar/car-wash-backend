@@ -8,7 +8,7 @@ export const createPayment = async (amount: number, transactionId: string) => {
   await Payment.create({
     amount: amount,
     transactionId,
-    status: "pending",
+    status: "Paid",
   });
 
   const filePath = join(__dirname, "../../templates/success.html");

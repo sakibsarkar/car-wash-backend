@@ -28,7 +28,7 @@ export const initiatePayment = async (
     tran_id,
     success_url: `http://localhost:5000/api/payment/success?pt=${PT}`,
     fail_url: `http://localhost:5000/api/payment/fail?pt=${PT}`,
-    cancel_url: `http://localhost:5000/api/payment/cancel?pt=${PT}`,
+    cancel_url: `http://localhost:5000/api/payment/fail?pt=${PT}`,
     desc: "Course Fee",
     type: "json",
   });

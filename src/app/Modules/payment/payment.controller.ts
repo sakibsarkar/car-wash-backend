@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
+import Booking from "../booking/booking.model";
 import { IPaymentTokenInfo } from "./payment.interface";
 import { paymentService } from "./payment.service";
 export const successPaymentController = catchAsyncError(async (req, res) => {
@@ -17,8 +18,8 @@ export const successPaymentController = catchAsyncError(async (req, res) => {
     });
   }
 
-  const { amount, transactionId } = decode as IPaymentTokenInfo;
-
+  const { amount, transactionId, slotId } = decode as IPaymentTokenInfo;
+  await Booking.findOneAndUpdate({ slot: slotId }, { payment: "paid" });
   const result = await paymentService.createPayment(
     Number(amount),
     transactionId

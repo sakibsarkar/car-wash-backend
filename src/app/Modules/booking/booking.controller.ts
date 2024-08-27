@@ -1,7 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import { catchAsyncError } from "../../../utils/catchAsyncError";
 import sendResponse from "../../../utils/sendResponse";
-import { initiatePayment, IPaymentPayload } from "../payment/payment.utils";
+import { IPaymentPayload } from "../payment/payment.interface";
+import { initiatePayment } from "../payment/payment.utils";
 import Service from "../service/service.model";
 import Slot from "../slot/slot.model";
 import { IBooking } from "./booking.interface";
@@ -82,14 +83,15 @@ export const createBookingIntoDB = catchAsyncError(async (req, res) => {
 });
 
 export const getAllBookings = catchAsyncError(async (req, res) => {
-  const result = await getAllBookingService();
+  const { result, totalDoc } = await getAllBookingService(req.query);
 
   if (result.length > 0) {
-    return sendResponse(res, {
+    return res.json({
       success: true,
       statusCode: 200,
       message: "All bookings retrieved successfully",
       data: result,
+      totalDoc,
     });
   }
   sendResponse(res, {

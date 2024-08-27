@@ -11,7 +11,7 @@ const PaymentSchema: Schema = new Schema<IPayment>(
       type: String,
       required: true,
     },
-    status: { type: String, required: true },
+    status: { type: String, required: true, default: "paid" },
   },
   { timestamps: true }
 );
