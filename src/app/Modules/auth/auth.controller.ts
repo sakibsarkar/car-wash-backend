@@ -78,6 +78,7 @@ export const genereteAccessToken = catchAsyncError(async (req, res) => {
   }
 
   const refreshTokenSecret = process.env.JWT_REFRESH_SECRET as string;
+console.log({refreshToken,refreshTokenSecret});
 
   try {
     const decoded = jwt.verify(refreshToken, refreshTokenSecret);

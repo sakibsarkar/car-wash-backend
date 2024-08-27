@@ -14,12 +14,12 @@ export const isAuthenticatedUser = async (
     const getToken = req.header("Authorization");
 
     if (!getToken)
-      return res.status(400).json({ message: "Invalid Authentication." });
+      return res.status(401).json({ message: "Invalid Authentication." });
 
     const token = getToken.split(" ")[1];
 
     if (!token) {
-      return res.status(400).json({ message: "Token not provided" });
+      return res.status(401).json({ message: "Token not provided" });
     }
     const decoded: any = jwt.verify(
       token,

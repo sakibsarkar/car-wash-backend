@@ -8,6 +8,7 @@ const {
   getAllAvailableSlotsService,
   getSlotByIdService,
   getAllSlotsService,
+  toggleSlotsStuasService,
 } = slotService;
 
 export const createSlotsIntoDB = catchAsyncError(async (req, res) => {
@@ -73,6 +74,24 @@ export const getSlotById = catchAsyncError(async (req, res) => {
   sendResponse(res, {
     message: "successfylly get slot",
     data: result,
-    success: false,
+    success: true,
+  });
+});
+export const toggleSlotStatus = catchAsyncError(async (req, res) => {
+  const result = await toggleSlotsStuasService(req.params.id);
+
+  if (!result) {
+    return sendResponse(res, {
+      data: null,
+      success: false,
+      message: "Slot not found",
+      statusCode: 404,
+    });
+  }
+
+  sendResponse(res, {
+    message: "successfylly updated slot status",
+    data: result,
+    success: true,
   });
 });

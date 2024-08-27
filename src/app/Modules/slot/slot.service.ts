@@ -55,12 +55,27 @@ const getSlotByIdService = async (id: string) => {
 
   return result;
 };
+const toggleSlotsStuasService = async (id: string) => {
+  const slot = await Slot.findById(id);
+  if (!slot) return null;
+  const oldStatus = slot.isBooked;
+  if (oldStatus === "booked") {
+    return null;
+  }
+
+  const newStatus = oldStatus === "available" ? "cancel" : "available";
+  const result = await Slot.findByIdAndUpdate(id, {
+    $set: { isBooked: newStatus },
+  });
+
+  return result;
+};
 
 const slotService = {
   createSlot,
   getAllAvailableSlotsService,
   getSlotByIdService,
-  getAllSlotsService,
+  getAllSlotsService,toggleSlotsStuasService
 };
 
 export default slotService;
