@@ -1,4 +1,4 @@
-# Mongoose Car wash
+# Aqua clean Server
 
 ## Introduction
 
@@ -44,6 +44,16 @@ MONGO_PASS=your mongodb password
 MONGO_DB=your database name
 NODE_ENV="development"
 JWT_ACCESS_SECRET=secret key for jwt token
+JWT_REFRESH_SECRET=secret key for jwt token
+CN_Cloud_name=Clodinary cloud name
+CN_Api_key=Clodinary api key
+CN_Api_secret=Clodinary api secret
+CN_Folder=Clodinary folder name
+MAILPASS=gmail id app password
+MAIL=email address
+SIGNATURE_KEY=dbb74894e82415a2f7ff0ec3a97e4183
+STORE_ID=aamarpaytest
+PAYMENT_URL= https://sandbox.aamarpay.com/jsonpost.php
 ```
 
 ### Running the Project
