@@ -6,8 +6,9 @@ export const getReviewService = async (limit?: number) => {
     .populate("user")
     .sort({ createdAt: -1 })
     .limit(limit || 2);
+  const totalDoc = await Review.countDocuments();
 
-  return result;
+  return { totalDoc, result };
 };
 export const createReviewService = async (payload: IReview) => {
   const result = await Review.create(payload);

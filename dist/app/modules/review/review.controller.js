@@ -28,9 +28,10 @@ exports.createReview = (0, catchAsyncError_1.catchAsyncError)((req, res) => __aw
 }));
 exports.getReviews = (0, catchAsyncError_1.catchAsyncError)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = req.query.limit || 2;
-    const result = yield review_service_1.default.getReviewService(Number(limit));
-    (0, sendResponse_1.default)(res, {
+    const { result, totalDoc } = yield review_service_1.default.getReviewService(Number(limit));
+    res.json({
         data: result,
+        totalDoc,
         success: true,
         message: "successfully get reviews",
     });

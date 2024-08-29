@@ -19,7 +19,8 @@ const getReviewService = (limit) => __awaiter(void 0, void 0, void 0, function* 
         .populate("user")
         .sort({ createdAt: -1 })
         .limit(limit || 2);
-    return result;
+    const totalDoc = yield review_model_1.default.countDocuments();
+    return { totalDoc, result };
 });
 exports.getReviewService = getReviewService;
 const createReviewService = (payload) => __awaiter(void 0, void 0, void 0, function* () {
